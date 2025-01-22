@@ -1,0 +1,16 @@
+[profile.default]
+evm_version = "paris"    # Explicitly set EVM version to Paris
+
+src = "src"
+out = "out"
+libs = ["lib"]
+
+[fmt]
+ignore = ["lib"]
+wrap_comments = true  
+number_underscore = "thousands"  
+multiline_func_header = "params_first"
+func_attrs_with_params_multiline = true
+
+func_params_multiline_threshold = 3
+# See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
