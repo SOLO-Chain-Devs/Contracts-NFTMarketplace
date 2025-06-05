@@ -6,6 +6,7 @@ import {console} from "forge-std/console.sol";
 
 import {NFT721Factory} from "../../src/mock/NFT721Factory.sol";
 import {NFT1155Factory} from "../../src/mock/NFT1155Factory.sol";
+import {NFT6909Factory} from "../../src/mock/NFT6909Factory.sol";
 import {NFT1155} from "../../src/mock/NFT1155.sol";
 
 // Create some 721 with the 721 factory
@@ -140,6 +141,88 @@ contract Create1155 is Script {
     }
 }
 
+// Create some 6909 with the 6909 factory
+contract Create6909 is Script {
+    function run() external {
+        uint256 deployerPrivateKey = vm.envUint("OFFCHAIN_PRIVATE_KEY");
+        address deployerAddress = vm.envAddress("OFFCHAIN_WALLET_ADDRESS");
+        address factoryAddress = vm.envAddress("FACTORY_6909_CA");
+
+        // Connect to the deployed factory
+        NFT6909Factory factory = NFT6909Factory(factoryAddress);
+
+        // Arrays for funny 6909 artifact names and symbols
+        string[10] memory names = [
+            "6909 Mystical Banana Orb",
+            "6909 Enchanted Pineapple Crystal",
+            "6909 Quantum Duck Essence",
+            "6909 Potato Portal Stone",
+            "6909 Pickle Power Core",
+            "6909 Flying Sausage Rune",
+            "6909 Invisible Taco Shard",
+            "6909 Space Donut Energy",
+            "6909 Dancing Avocado Spirit",
+            "6909 Laughing Penguin Soul"
+        ];
+
+        string[10] memory symbols = [
+            "MYSTICAL_BANANA",
+            "ENCHANTED_PINEAPPLE",
+            "QUANTUM_DUCK",
+            "POTATO_PORTAL",
+            "PICKLE_POWER",
+            "FLYING_SAUSAGE",
+            "INVISIBLE_TACO",
+            "SPACE_DONUT",
+            "DANCING_AVOCADO",
+            "LAUGHING_PENGUIN"
+        ];
+
+        uint256[] memory initialAmounts = new uint256[](8);
+        uint256[] memory initialIds = new uint256[](8);
+
+        initialIds[0] = 1;
+        initialIds[1] = 3;
+        initialIds[2] = 5;
+        initialIds[3] = 7;
+        initialIds[4] = 11;
+        initialIds[5] = 13;
+        initialIds[6] = 17;
+        initialIds[7] = 19;
+
+        initialAmounts[0] = 1000;
+        initialAmounts[1] = 500;
+        initialAmounts[2] = 750;
+        initialAmounts[3] = 250;
+        initialAmounts[4] = 1500;
+        initialAmounts[5] = 300;
+        initialAmounts[6] = 800;
+        initialAmounts[7] = 1200;
+
+        vm.startBroadcast(deployerPrivateKey);
+
+        address initialReceiver = deployerAddress;
+
+        // Deploy 10 NFTs 6909 with funny artifact names and symbols
+        for (uint256 i = 0; i < 10; i++) {
+            address nft = factory.createNFT6909(
+                names[i], // Unique funny artifact name
+                symbols[i], // Unique symbol
+                "https://mystical-artifacts.com/", // Base URI
+                initialReceiver, // Royalty receiver
+                250, // Fee numerator (2.5% royalty)
+                initialIds, // Initial IDs for the artifacts
+                initialAmounts, // Initial amounts for each artifact
+                initialReceiver // Initial receiver
+            );
+
+            console.log("6909 deployed to:", nft);
+        }
+
+        vm.stopBroadcast();
+    }
+}
+
 // List all 721
 contract ListAll721 is Script {
     function run() external {
@@ -186,6 +269,31 @@ contract ListAll1155 is Script {
         console.log("Total 1155 Created:", totalNFTs);
 
         // Log each address in the array and their balances
+        for (uint256 i = 0; i < addresses.length; i++) {
+            console.log("Contract Address:", addresses[i]);
+        }
+
+        vm.stopBroadcast();
+    }
+}
+
+// List all 6909
+contract ListAll6909 is Script {
+    function run() external {
+        address factoryAddress = vm.envAddress("FACTORY_6909_CA");
+
+        vm.startBroadcast();
+
+        // Connect to the deployed factory
+        NFT6909Factory factory = NFT6909Factory(factoryAddress);
+
+        address[] memory addresses = factory.getAllNFTContracts();
+
+        // Get and log the total number of NFT contracts
+        uint256 totalNFTs = factory.getTotalNFTContracts();
+        console.log("Total 6909 Created:", totalNFTs);
+
+        // Log each address in the array
         for (uint256 i = 0; i < addresses.length; i++) {
             console.log("Contract Address:", addresses[i]);
         }
