@@ -52,7 +52,7 @@ forge install
 
 3. Build the project:
 ```bash
-forge build
+forge build --via-ir
 ```
 
 ### Testing
