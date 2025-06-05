@@ -50,7 +50,7 @@ contract MarketTest is Test {
         market = new NFTMarketplace();
         nft721 = new NFT721("ERC721", "721", "", msg.sender, 0, 0, msg.sender);
         nft1155 = new NFT1155("ERC1155", "1155", "", msg.sender, 0, new uint256[](1), new uint256[](1), msg.sender);
-        
+
         // Setup ERC6909 with initial tokens
         uint256[] memory initialIds = new uint256[](3);
         uint256[] memory initialAmounts = new uint256[](3);
@@ -60,19 +60,12 @@ contract MarketTest is Test {
         initialAmounts[0] = 100;
         initialAmounts[1] = 200;
         initialAmounts[2] = 300;
-        
+
         nft6909 = new NFT6909(
-            "ERC6909", 
-            "6909", 
-            "https://example.com/", 
-            msg.sender, 
-            0, 
-            initialIds, 
-            initialAmounts, 
-            msg.sender
+            "ERC6909", "6909", "https://example.com/", msg.sender, 0, initialIds, initialAmounts, msg.sender
         );
         vm.stopPrank();
-        
+
         vm.deal(deployer, 100 ether);
         vm.deal(seller1, 100 ether);
         vm.deal(seller2, 100 ether);
@@ -159,7 +152,7 @@ contract MarketTest is Test {
         address _currency = address(0);
 
         vm.startPrank(seller1);
-        nft6909.setOperator(address(market), true);  // ERC6909 uses setOperator instead of setApprovalForAll
+        nft6909.setOperator(address(market), true); // ERC6909 uses setOperator instead of setApprovalForAll
         market.createListing(_tokenAddress, _tokenId, _amount, _price, _currency);
         vm.stopPrank();
 
@@ -201,7 +194,7 @@ contract MarketTest is Test {
         vm.startPrank(seller1);
         vm.expectRevert(ContractNeedsApproval.selector);
         market.acceptBid(address(nft721), 1, 1);
-        
+
         vm.expectRevert(ContractNeedsApproval.selector);
         market.acceptBid(address(nft6909), 1, 5);
         vm.stopPrank();
@@ -221,14 +214,16 @@ contract MarketTest is Test {
         vm.stopPrank();
 
         // Check ERC721 bid
-        (address bidder721, uint256 amount721, address currency721,, uint256 tokenAmount721) = market.bids(address(nft721), 1, 1);
+        (address bidder721, uint256 amount721, address currency721,, uint256 tokenAmount721) =
+            market.bids(address(nft721), 1, 1);
         assert(bidder721 == buyer1);
         assert(amount721 == 1 ether);
         assert(currency721 == address(0));
         assert(tokenAmount721 == 1);
 
         // Check ERC6909 bid
-        (address bidder6909, uint256 amount6909, address currency6909,, uint256 tokenAmount6909) = market.bids(address(nft6909), 1, 5);
+        (address bidder6909, uint256 amount6909, address currency6909,, uint256 tokenAmount6909) =
+            market.bids(address(nft6909), 1, 5);
         assert(bidder6909 == buyer1);
         assert(amount6909 == 1 ether);
         assert(currency6909 == address(0));
@@ -243,7 +238,7 @@ contract MarketTest is Test {
         vm.startPrank(seller1);
         vm.expectRevert(NoActiveBid.selector);
         market.acceptBid(address(nft721), 1, 1);
-        
+
         vm.expectRevert(NoActiveBid.selector);
         market.acceptBid(address(nft6909), 1, 5);
         vm.stopPrank();
@@ -263,7 +258,7 @@ contract MarketTest is Test {
         vm.warp(block.timestamp + 8 days);
         vm.expectRevert(BidHasExpired.selector);
         market.acceptBid(address(nft721), 1, 1);
-        
+
         vm.expectRevert(BidHasExpired.selector);
         market.acceptBid(address(nft6909), 1, 5);
         vm.stopPrank();
@@ -299,16 +294,16 @@ contract MarketTest is Test {
         // Test ERC6909 bid acceptance
         assert(nft6909.balanceOf(seller1, 1) == 10);
         assert(nft6909.balanceOf(buyer1, 1) == 0);
-        
+
         uint256 sellerBalance6909Initial = seller1.balance;
 
         vm.startPrank(seller1);
-        nft6909.setOperator(address(market), true);  // ERC6909 uses setOperator
+        nft6909.setOperator(address(market), true); // ERC6909 uses setOperator
         market.acceptBid(address(nft6909), 1, 5);
         vm.stopPrank();
 
-        assert(nft6909.balanceOf(seller1, 1) == 5);  // 10 - 5 = 5 remaining
-        assert(nft6909.balanceOf(buyer1, 1) == 5);   // buyer received 5 tokens
+        assert(nft6909.balanceOf(seller1, 1) == 5); // 10 - 5 = 5 remaining
+        assert(nft6909.balanceOf(buyer1, 1) == 5); // buyer received 5 tokens
         assert(seller1.balance == sellerBalance6909Initial + sellPrice);
     }
 
@@ -320,7 +315,7 @@ contract MarketTest is Test {
         // Place bids on different amounts of the same token
         market.placeBid{value: 1 ether}(address(nft6909), 1, 10, address(0), 1 ether, 0);
         market.placeBid{value: 2 ether}(address(nft6909), 1, 20, address(0), 2 ether, 0);
-        
+
         // Place bid on different token ID
         market.placeBid{value: 3 ether}(address(nft6909), 2, 25, address(0), 3 ether, 0);
         vm.stopPrank();

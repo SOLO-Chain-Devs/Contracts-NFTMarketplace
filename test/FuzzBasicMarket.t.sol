@@ -31,16 +31,9 @@ contract MarketFuzzTest is Test {
         uint256[] memory initialAmounts = new uint256[](1);
         initialIds[0] = 1;
         initialAmounts[0] = 1000; // Large initial supply for fuzz testing
-        
+
         nft6909 = new NFT6909(
-            "ERC6909", 
-            "6909", 
-            "https://example.com/", 
-            msg.sender, 
-            0, 
-            initialIds, 
-            initialAmounts, 
-            msg.sender
+            "ERC6909", "6909", "https://example.com/", msg.sender, 0, initialIds, initialAmounts, msg.sender
         );
 
         vm.stopPrank();
@@ -285,7 +278,7 @@ contract MarketFuzzTest is Test {
         vm.stopPrank();
 
         // Verify bid was placed correctly
-        (address bidder, uint256 bidAmountStored, address currency,, uint256 tokenAmount) = 
+        (address bidder, uint256 bidAmountStored, address currency,, uint256 tokenAmount) =
             market.bids(address(nft6909), _tokenId, _amount);
 
         assertEq(bidder, buyer1);
@@ -305,10 +298,10 @@ contract MarketFuzzTest is Test {
 
     // Fuzz test for ERC6909 multiple bid amounts on same token
     function testFuzz_ERC6909_Multiple_Bids(uint256 _tokenId, uint256 _amount1, uint256 _amount2) public {
-        _tokenId = bound(_tokenId, 1, type(uint256).max);  // Ensure tokenId > 0
-        _amount1 = bound(_amount1, 1, 25);  // Ensure 1 <= _amount1 <= 25
-        _amount2 = bound(_amount2, 1, 25);  // Ensure 1 <= _amount2 <= 25
-        
+        _tokenId = bound(_tokenId, 1, type(uint256).max); // Ensure tokenId > 0
+        _amount1 = bound(_amount1, 1, 25); // Ensure 1 <= _amount1 <= 25
+        _amount2 = bound(_amount2, 1, 25); // Ensure 1 <= _amount2 <= 25
+
         // Ensure different amounts for the bids
         if (_amount1 == _amount2) {
             _amount2 = _amount1 == 25 ? _amount2 - 1 : _amount2 + 1;
@@ -326,9 +319,9 @@ contract MarketFuzzTest is Test {
         vm.stopPrank();
 
         // Verify both bids exist independently
-        (address bidder1, uint256 bidAmount1,,, uint256 tokenAmount1) = 
+        (address bidder1, uint256 bidAmount1,,, uint256 tokenAmount1) =
             market.bids(address(nft6909), _tokenId, _amount1);
-        (address bidder2, uint256 bidAmount2,,, uint256 tokenAmount2) = 
+        (address bidder2, uint256 bidAmount2,,, uint256 tokenAmount2) =
             market.bids(address(nft6909), _tokenId, _amount2);
 
         assertEq(bidder1, buyer1);
@@ -341,17 +334,17 @@ contract MarketFuzzTest is Test {
     }
 
     // Comprehensive fuzz test for ERC6909 marketplace operations
-        function testFuzz_ERC6909_Complete_Flow(uint256 _tokenId, uint256 _listAmount, uint256 _bidAmount) public {
-        _tokenId = bound(_tokenId, 1, type(uint256).max);  // Ensure tokenId > 0
-        _listAmount = bound(_listAmount, 1, 25);  // Ensure 1 <= _listAmount <= 25
-        _bidAmount = bound(_bidAmount, 1, 25);    // Ensure 1 <= _bidAmount <= 25
-        
+    function testFuzz_ERC6909_Complete_Flow(uint256 _tokenId, uint256 _listAmount, uint256 _bidAmount) public {
+        _tokenId = bound(_tokenId, 1, type(uint256).max); // Ensure tokenId > 0
+        _listAmount = bound(_listAmount, 1, 25); // Ensure 1 <= _listAmount <= 25
+        _bidAmount = bound(_bidAmount, 1, 25); // Ensure 1 <= _bidAmount <= 25
+
         // Ensure different amounts for listing vs bidding
         if (_listAmount == _bidAmount) {
             _bidAmount = _listAmount == 25 ? _bidAmount - 1 : _bidAmount + 1;
         }
 
-        uint256 _listPrice = 1 ether;  // Fixed values to reduce constraint complexity
+        uint256 _listPrice = 1 ether; // Fixed values to reduce constraint complexity
         uint256 _bidPrice = 2 ether;
 
         uint256 totalMint = _listAmount + _bidAmount + 20;
@@ -369,8 +362,13 @@ contract MarketFuzzTest is Test {
         vm.stopPrank();
 
         // Verify listing exists
-        (address listingSeller, address listingToken, uint256 listingTokenId, uint256 listingAmount, uint256 listingPrice,) =
-            market.listings(1);
+        (
+            address listingSeller,
+            address listingToken,
+            uint256 listingTokenId,
+            uint256 listingAmount,
+            uint256 listingPrice,
+        ) = market.listings(1);
         assertEq(listingSeller, seller1);
         assertEq(listingToken, address(nft6909));
         assertEq(listingTokenId, _tokenId);
@@ -378,7 +376,7 @@ contract MarketFuzzTest is Test {
         assertEq(listingPrice, _listPrice);
 
         // Verify bid exists
-        (address bidder, uint256 bidAmountStored,,, uint256 bidTokenAmount) = 
+        (address bidder, uint256 bidAmountStored,,, uint256 bidTokenAmount) =
             market.bids(address(nft6909), _tokenId, _bidAmount);
         assertEq(bidder, buyer1);
         assertEq(bidAmountStored, _bidPrice);

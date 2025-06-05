@@ -35,16 +35,9 @@ contract MarketTest is Test {
         initialAmounts[0] = 100;
         initialAmounts[1] = 200;
         initialAmounts[2] = 300;
-        
+
         nft6909 = new NFT6909(
-            "ERC6909", 
-            "6909", 
-            "https://example.com/", 
-            msg.sender, 
-            0, 
-            initialIds, 
-            initialAmounts, 
-            msg.sender
+            "ERC6909", "6909", "https://example.com/", msg.sender, 0, initialIds, initialAmounts, msg.sender
         );
 
         vm.stopPrank();
@@ -134,7 +127,7 @@ contract MarketTest is Test {
         address _currency = address(0);
 
         vm.startPrank(seller1);
-        nft6909.setOperator(address(market), true);  // ERC6909 uses setOperator
+        nft6909.setOperator(address(market), true); // ERC6909 uses setOperator
         market.createListing(_tokenAddress, _tokenId, _amount, _price, _currency);
         vm.stopPrank();
 
@@ -206,7 +199,7 @@ contract MarketTest is Test {
         address _currency = address(0);
 
         vm.startPrank(seller1);
-        nft6909.setOperator(address(market), true);  // ERC6909 uses setOperator
+        nft6909.setOperator(address(market), true); // ERC6909 uses setOperator
         market.createListing(_tokenAddress, _tokenId, _amount, _price, _currency);
         vm.stopPrank();
 
@@ -215,8 +208,8 @@ contract MarketTest is Test {
         market.buyListing{value: 1 ether}(1);
         vm.stopPrank();
 
-        assert(nft6909.balanceOf(buyer1, 1) == 5);   // Buyer received 5 tokens
-        assert(nft6909.balanceOf(seller1, 1) == 5);  // Seller has 5 remaining
+        assert(nft6909.balanceOf(buyer1, 1) == 5); // Buyer received 5 tokens
+        assert(nft6909.balanceOf(seller1, 1) == 5); // Seller has 5 remaining
     }
 
     function test_Cancel_Listing() public {
@@ -307,14 +300,14 @@ contract MarketTest is Test {
 
         vm.startPrank(seller1);
         nft6909.setOperator(address(market), true);
-        
+
         // Create multiple listings for different token IDs
         market.createListing(address(nft6909), 1, 30, 1 ether, address(0));
         market.createListing(address(nft6909), 2, 20, 2 ether, address(0));
-        
+
         // Create another listing for same token ID but different amount
         market.createListing(address(nft6909), 1, 40, 1.5 ether, address(0));
-        
+
         vm.stopPrank();
 
         // Verify all listings exist
@@ -356,7 +349,7 @@ contract MarketTest is Test {
 
         // Verify balances after purchase
         assertEq(nft6909.balanceOf(buyer1, 1), buyerTokenBalanceBefore + 50);
-        assertEq(nft6909.balanceOf(seller1, 1), 50);  // 100 - 50 = 50 remaining
+        assertEq(nft6909.balanceOf(seller1, 1), 50); // 100 - 50 = 50 remaining
         assertEq(seller1.balance, sellerBalanceBefore + 2 ether);
     }
 
@@ -368,7 +361,7 @@ contract MarketTest is Test {
         // Test other standards still work
         assertTrue(market.isTokenAccepted(address(nft721)));
         assertTrue(market.isTokenAccepted(address(nft1155)));
-        
+
         // Test non-NFT address
         assertFalse(market.isTokenAccepted(address(0)));
     }
