@@ -15,6 +15,24 @@ contract NFTMarketplace is IMarketplace, MarketplaceAdmin, MarketplaceViews, Ree
     using MarketplaceLibrary for address;
 
     /**
+     * @notice Validates that a token contract is approved for marketplace interactions when curation is enabled
+     * @param _tokenAddress The NFT contract address to validate against the curation system
+     * @dev Only enforces validation if both curationEnabled is true AND curationValidator is set
+     *      Reverts with CollectionNotApproved if the collection fails validation
+     *      Allows unrestricted access when curation is disabled or validator is unset
+     */
+    modifier onlyApprovedCollections(
+        address _tokenAddress
+    ) {
+        if (curationEnabled && curationValidator != address(0)) {
+            if (!ICurationValidator(curationValidator).isApprovedCollection(_tokenAddress)) {
+                revert CollectionNotApproved(_tokenAddress);
+            }
+        }
+        _;
+    }
+
+    /**
      * @notice Creates a new listing for an NFT
      * @param _tokenAddress The address of the NFT contract
      * @param _tokenId The token ID of the NFT
@@ -29,7 +47,7 @@ contract NFTMarketplace is IMarketplace, MarketplaceAdmin, MarketplaceViews, Ree
         uint256 _amount,
         uint256 _price,
         address _currency
-    ) external override nonReentrant {
+    ) external override nonReentrant onlyApprovedCollections(_tokenAddress) {
         if (_price == 0) revert PriceMustBeGreaterThanZero();
         if (_amount == 0) revert AmountMustBeGreaterThanZero();
         if (!acceptedCurrencies[_currency]) {
@@ -236,7 +254,7 @@ contract NFTMarketplace is IMarketplace, MarketplaceAdmin, MarketplaceViews, Ree
         address _currency,
         uint256 _amount,
         uint256 _customDuration
-    ) external payable override nonReentrant {
+    ) external payable override nonReentrant onlyApprovedCollections(_tokenAddress) {
         if (!acceptedCurrencies[_currency]) revert CurrencyNotAcceptedForBid();
         if (_tokenAmount == 0) revert TokenAmountMustBeGreaterThanZero();
         if (_customDuration > bidDuration) revert DurationExceedsMaximum();

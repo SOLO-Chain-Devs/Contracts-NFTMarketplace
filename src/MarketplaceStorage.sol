@@ -3,6 +3,7 @@
 pragma solidity ^0.8.27;
 
 import "./interface/IMarketplace.sol";
+import "./interface/ICurationValidator.sol";
 
 abstract contract MarketplaceStorage {
     mapping(uint256 => IMarketplace.Listing) public listings;
@@ -18,6 +19,8 @@ abstract contract MarketplaceStorage {
     uint256 public constant MAX_BID_DURATION = 365 days;
     uint256 public cancellationFeePercentage = 100; // 1% fee (100 basis points)
     uint256 public constant MAX_CANCELLATION_FEE_PERCENTAGE = 3000; // 30% max fee (3000 basis points)
+    bool public curationEnabled;
+    address public curationValidator;
 
     // ERC165 interface IDs
     bytes4 internal constant INTERFACE_ID_ERC721 = 0x80ac58cd;
@@ -51,4 +54,6 @@ abstract contract MarketplaceStorage {
     error NotBidder();
     error DurationExceedsMaximum();
     error BidDurationTooLong();
+    error CollectionNotApproved(address tokenContract);
+    error InvalidCurationValidator();
 }

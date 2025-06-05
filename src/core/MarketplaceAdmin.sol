@@ -72,4 +72,26 @@ contract MarketplaceAdmin is MarketplaceStorage, Ownable {
         }
         cancellationFeePercentage = _newPercentage;
     }
+
+    /**
+     * @notice Enables or disables the curation gatekeeping system
+     * @param _enabled True to enable curation validation, false to allow all collections
+     * @dev When enabled, only collections approved by the curation validator can be listed or bid on
+     */
+    function setCurationEnabled(
+        bool _enabled
+    ) external onlyOwner {
+        curationEnabled = _enabled;
+    }
+
+    /**
+     * @notice Sets the curation validator contract address
+     * @param _validator Address of the contract that validates approved collections
+     * @dev Setting to address(0) effectively disables curation even if enabled flag is true
+     */
+    function setCurationValidator(
+        address _validator
+    ) external onlyOwner {
+        curationValidator = _validator;
+    }
 }
