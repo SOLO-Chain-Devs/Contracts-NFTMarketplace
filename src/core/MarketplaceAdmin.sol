@@ -82,6 +82,7 @@ contract MarketplaceAdmin is MarketplaceStorage, Ownable {
         bool _enabled
     ) external onlyOwner {
         curationEnabled = _enabled;
+        emit IMarketplace.CurationEnabled(_enabled);
     }
 
     /**
@@ -92,6 +93,8 @@ contract MarketplaceAdmin is MarketplaceStorage, Ownable {
     function setCurationValidator(
         address _validator
     ) external onlyOwner {
+        address oldValidator = curationValidator;
         curationValidator = _validator;
+        emit IMarketplace.CurationValidatorUpdated(_validator, oldValidator);
     }
 }

@@ -82,6 +82,8 @@ interface IMarketplace {
         uint256 newTimeout
     );
     event CurrencyStatusUpdated(address indexed currency, bool accepted);
+    event CurationEnabled(bool enabled);
+    event CurationValidatorUpdated(address indexed newValidator, address indexed oldValidator);
 
     function createListing(
         address _tokenAddress,
