@@ -26,7 +26,9 @@ contract NFT1155 is ERC1155, RoyaltyFeatures, Ownable {
         _mintBatch(initialReceiver, initialIds, initialAmounts, "");
     }
 
-    function setURI(string memory newuri) public onlyOwner {
+    function setURI(
+        string memory newuri
+    ) public onlyOwner {
         _setURI(newuri);
     }
 

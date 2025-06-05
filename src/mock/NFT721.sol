@@ -12,7 +12,7 @@ contract NFT721 is ERC721, RoyaltyFeatures, Ownable {
     constructor(
         string memory name,
         string memory symbol,
-        string memory defaultUri, 
+        string memory defaultUri,
         address royaltyReceiver,
         uint96 feeNumerator,
         uint256 _mintSupply,
@@ -32,12 +32,14 @@ contract NFT721 is ERC721, RoyaltyFeatures, Ownable {
         _safeMint(to, tokenId);
     }
 
-    function setBaseURI(string memory newUri) public onlyOwner {
+    function setBaseURI(
+        string memory newUri
+    ) public onlyOwner {
         baseURI = newUri;
     }
-    
+
     function _baseURI() internal view override returns (string memory) {
-    return baseURI;  
+        return baseURI;
     }
 
     // Required override to make ERC721 and ERC2981 work together

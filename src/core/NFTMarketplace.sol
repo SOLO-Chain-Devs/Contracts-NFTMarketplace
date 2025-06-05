@@ -117,9 +117,7 @@ contract NFTMarketplace is IMarketplace, MarketplaceAdmin, MarketplaceViews, Ree
             );
         } else {
             // ERC6909 handling
-            IERC6909(listing.tokenAddress).transferFrom(
-                listing.seller, msg.sender, listing.tokenId, listing.amount
-            );
+            IERC6909(listing.tokenAddress).transferFrom(listing.seller, msg.sender, listing.tokenId, listing.amount);
         }
 
         (address royaltyReceiver, uint256 royaltyAmount, bool hasRoyalties) =
@@ -266,11 +264,19 @@ contract NFTMarketplace is IMarketplace, MarketplaceAdmin, MarketplaceViews, Ree
                 // Handle active bid
                 if (bidAmount <= currentBid.amount) {
                     revert BidMustBeHigherThanCurrent();
-               }
+                }
                 MarketplaceLibrary.transferPaymentToAddress(currentBid.currency, currentBid.amount, currentBid.bidder);
                 emit BidOutbid(
-                        _tokenAddress, _tokenId, _tokenAmount, currentBid.bidder, msg.sender, currentBid.amount, 
-                        bidAmount, _currency, currentBid.timeout, block.timestamp + actualDuration
+                    _tokenAddress,
+                    _tokenId,
+                    _tokenAmount,
+                    currentBid.bidder,
+                    msg.sender,
+                    currentBid.amount,
+                    bidAmount,
+                    _currency,
+                    currentBid.timeout,
+                    block.timestamp + actualDuration
                 );
             }
         }

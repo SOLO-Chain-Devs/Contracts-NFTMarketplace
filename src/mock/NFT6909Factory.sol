@@ -20,14 +20,7 @@ contract NFT6909Factory {
         address _initialReceiver
     ) external returns (address) {
         NFT6909 newNFT = new NFT6909(
-            _name,
-            _symbol,
-            _baseURI,
-            _royaltyReceiver,
-            _feeNumerator,
-            _initialIds,
-            _initialAmounts,
-            _initialReceiver
+            _name, _symbol, _baseURI, _royaltyReceiver, _feeNumerator, _initialIds, _initialAmounts, _initialReceiver
         );
 
         nftContracts.push(address(newNFT));

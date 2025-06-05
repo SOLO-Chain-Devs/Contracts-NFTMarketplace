@@ -23,14 +23,14 @@ contract DeployNFT1155 is Script {
         initialAmounts[3] = 0;
 
         NFT1155 nft = new NFT1155(
-            "Test1155",                                         // name
-            "TST1155",                                         // symbol
+            "Test1155", // name
+            "TST1155", // symbol
             "",
-            0x0000000000000000000000000000000000000000,        // royaltyReceiver
-            0,                                                  // feeNumerator
-            initialIds,                                        // initialIds
-            initialAmounts,                                    // initialAmounts
-            0x0000000000000000000000000000000000000000         // initialReceiver
+            0x0000000000000000000000000000000000000000, // royaltyReceiver
+            0, // feeNumerator
+            initialIds, // initialIds
+            initialAmounts, // initialAmounts
+            0x0000000000000000000000000000000000000000 // initialReceiver
         );
 
         console.log("NFT1155 deployed to:", address(nft));

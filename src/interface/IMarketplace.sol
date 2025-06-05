@@ -78,8 +78,8 @@ interface IMarketplace {
         uint256 previousAmount,
         uint256 newAmount,
         address currency,
-        uint256 previousTimeout,    
-        uint256 newTimeout         
+        uint256 previousTimeout,
+        uint256 newTimeout
     );
     event CurrencyStatusUpdated(address indexed currency, bool accepted);
 

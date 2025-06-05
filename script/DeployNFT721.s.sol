@@ -10,13 +10,13 @@ contract DeployNFT721 is Script {
         vm.startBroadcast(deployerPrivateKey);
 
         NFT721 nft = new NFT721(
-            "Test",                                              // name
-            "Test1",                                            // symbol
+            "Test", // name
+            "Test1", // symbol
             "",
-            0x0000000000000000000000000000000000000000,        // royaltyReceiver
-            0,                                                  // feeNumerator
-            1,                                                  // mintSupply
-            0x0000000000000000000000000000000000000000         // initialReceiver
+            0x0000000000000000000000000000000000000000, // royaltyReceiver
+            0, // feeNumerator
+            1, // mintSupply
+            0x0000000000000000000000000000000000000000 // initialReceiver
         );
 
         console.log("NFT721 deployed to:", address(nft));

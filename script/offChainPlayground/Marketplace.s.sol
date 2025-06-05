@@ -28,7 +28,7 @@ contract CreateListing is Script {
             0x0000000000000000000000000000000000000000,
             0,
             1,
-            5000000000000000000,
+            5_000_000_000_000_000_000,
             0x0000000000000000000000000000000000000000
         );
 
@@ -45,7 +45,6 @@ contract CreateListing is Script {
             console.log("  Price: %d", activeListings[i].price);
             console.log("  Currency: %s", activeListings[i].currency);
         }
-
 
         vm.stopBroadcast();
     }
@@ -82,7 +81,6 @@ contract CancelListing is Script {
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("OFFCHAIN_PRIVATE_KEY");
 
-
         address marketplaceAddress = vm.envAddress("MARKETPLACE_CA");
 
         NFTMarketplace marketplace = NFTMarketplace(marketplaceAddress);
@@ -107,9 +105,9 @@ contract CancelListing is Script {
             console.log("  Currency: %s", activeListings1[i].currency);
         }
 
-//        marketplace.cancelListing(1);
-//        marketplace.cancelListing(2);
-//        marketplace.cancelListing(3);
+        //        marketplace.cancelListing(1);
+        //        marketplace.cancelListing(2);
+        //        marketplace.cancelListing(3);
         marketplace.cancelListing(4);
 
         console.log("================");
@@ -132,7 +130,6 @@ contract CancelListing is Script {
     }
 }
 
-
 contract CreateAndListNFT is Script {
     function run() external {
         // Load environment variables
@@ -149,13 +146,13 @@ contract CreateAndListNFT is Script {
 
         // Create a single NFT721
         address newNFTAddress = factory.createNFT721(
-            "Test NFT Collection",     // name
-            "TEST",                    // symbol
-            "",                        // baseURI
-            deployerAddress,           // royaltyReceiver
-            0,                         // feeNumerator
-            10,                        // mintSupply
-            deployerAddress            // initialReceiver
+            "Test NFT Collection", // name
+            "TEST", // symbol
+            "", // baseURI
+            deployerAddress, // royaltyReceiver
+            0, // feeNumerator
+            10, // mintSupply
+            deployerAddress // initialReceiver
         );
 
         console.log("Created new NFT at address:", newNFTAddress);
@@ -168,22 +165,22 @@ contract CreateAndListNFT is Script {
 
         // Create listing for the first token (ID 0)
         marketplace.createListing(
-            newNFTAddress,            // nftContract
-            0,                        // tokenId
-            1,                        // amount
-            5 ether,                  // price (5 ETH)
-            address(0)                // paymentToken (ETH)
+            newNFTAddress, // nftContract
+            0, // tokenId
+            1, // amount
+            5 ether, // price (5 ETH)
+            address(0) // paymentToken (ETH)
         );
 
         console.log("Created listing for NFT token 0");
 
         // Place a bid (optional)
         marketplace.placeBid{value: 0.001 ether}(
-            newNFTAddress,           // nftContract
-            0,                       // tokenId
-            1,                       // amount
-            address(0),              // paymentToken
-            1 ether,                 // bidAmount
+            newNFTAddress, // nftContract
+            0, // tokenId
+            1, // amount
+            address(0), // paymentToken
+            1 ether, // bidAmount
             1 days // expirationTime
         );
 
@@ -193,16 +190,15 @@ contract CreateAndListNFT is Script {
 
         // Place higher bid with new bidder
         marketplace.placeBid{value: 0.002 ether}(
-            newNFTAddress,           
+            newNFTAddress,
             0,
-            1,                       
-            address(0),              
-            0.002 ether,                 
-            2 days  // Different duration to verify in event
+            1,
+            address(0),
+            0.002 ether,
+            2 days // Different duration to verify in event
         );
 
         console.log("Placed outbidding bid for NFT token 0");
-
 
         vm.stopBroadcast();
     }
@@ -218,14 +214,13 @@ contract PlaceBid is Script {
 
         vm.startBroadcast(deployerPrivateKey);
 
-
         marketplace.placeBid{value: 1 ether}(
             0x0000000000000000000000000000000000000000,
             0,
             1,
             0x0000000000000000000000000000000000000000,
-            5000000000000000000,     // Amount
-            32323
+            5_000_000_000_000_000_000, // Amount
+            32_323
         );
 
         vm.stopBroadcast();
@@ -247,6 +242,3 @@ contract GetActiveBids is Script {
         vm.stopBroadcast();
     }
 }
-
-
-

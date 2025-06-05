@@ -12,15 +12,16 @@ contract NFT1155Factory {
     function createNFT1155(
         string memory _name,
         string memory _symbol,
-        string memory _uri, 
+        string memory _uri,
         address _royaltyReceiver,
         uint96 _feeNumerator,
         uint256[] memory _initialIds,
         uint256[] memory _initialAmounts,
         address _initialReceiver
     ) external returns (address) {
-        NFT1155 newNFT =
-            new NFT1155(_name, _symbol, _uri, _royaltyReceiver, _feeNumerator, _initialIds, _initialAmounts, _initialReceiver);
+        NFT1155 newNFT = new NFT1155(
+            _name, _symbol, _uri, _royaltyReceiver, _feeNumerator, _initialIds, _initialAmounts, _initialReceiver
+        );
 
         nftContracts.push(address(newNFT));
         creatorToContracts[msg.sender].push(address(newNFT));

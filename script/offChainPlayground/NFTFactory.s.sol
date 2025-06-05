@@ -20,43 +20,33 @@ contract Create721 is Script {
 
         // Arrays for funny names and symbols
         string[10] memory names = [
-                    "721 Banana Lord",
-                    "721 Pineapple Pizza",
-                    "721 Quantum Duck",
-                    "721 Couch Potato",
-                    "721 Spicy Pickle",
-                    "721 Flying Sausage",
-                    "721 Invisible Taco",
-                    "721 Space Donut",
-                    "721 Dancing Avocado",
-                    "721 Laughing Penguin"
-            ];
+            "721 Banana Lord",
+            "721 Pineapple Pizza",
+            "721 Quantum Duck",
+            "721 Couch Potato",
+            "721 Spicy Pickle",
+            "721 Flying Sausage",
+            "721 Invisible Taco",
+            "721 Space Donut",
+            "721 Dancing Avocado",
+            "721 Laughing Penguin"
+        ];
 
-        string[10] memory symbols = [
-                    "BANANA",
-                    "PIZZA",
-                    "DUCK",
-                    "POTATO",
-                    "PICKLE",
-                    "SAUSAGE",
-                    "TACO",
-                    "DONUT",
-                    "AVOCADO",
-                    "PENGUIN"
-            ];
+        string[10] memory symbols =
+            ["BANANA", "PIZZA", "DUCK", "POTATO", "PICKLE", "SAUSAGE", "TACO", "DONUT", "AVOCADO", "PENGUIN"];
 
         vm.startBroadcast(deployerPrivateKey);
 
         // Deploy 10 NFTs with unique funny names and symbols
         for (uint256 i = 0; i < 10; i++) {
             address newNFT = factory.createNFT721(
-                names[i],            // Unique funny name
-                symbols[i],          // Unique symbol
+                names[i], // Unique funny name
+                symbols[i], // Unique symbol
                 "",
-                deployerAddress,     // Royalty receiver
-                0,                   // Fee numerator
-                10,                  // Mint supply
-                deployerAddress      // Initial receiver
+                deployerAddress, // Royalty receiver
+                0, // Fee numerator
+                10, // Mint supply
+                deployerAddress // Initial receiver
             );
 
             console.log("721 deployed to:", newNFT);
@@ -78,30 +68,30 @@ contract Create1155 is Script {
 
         // Arrays for funny 1155 weapon names and symbols
         string[10] memory names = [
-                    "1155 Flaming Banana Sword",
-                    "1155 Exploding Pineapple Grenade",
-                    "1155 Quantum Duck Bow",
-                    "1155 Potato Launcher",
-                    "1155 Pickle Sword of Fury",
-                    "1155 Flying Sausage Shield",
-                    "1155 Invisible Taco Blade",
-                    "1155 Space Donut Gun",
-                    "1155 Dancing Avocado Spear",
-                    "1155 Laughing Penguin Hammer"
-            ];
+            "1155 Flaming Banana Sword",
+            "1155 Exploding Pineapple Grenade",
+            "1155 Quantum Duck Bow",
+            "1155 Potato Launcher",
+            "1155 Pickle Sword of Fury",
+            "1155 Flying Sausage Shield",
+            "1155 Invisible Taco Blade",
+            "1155 Space Donut Gun",
+            "1155 Dancing Avocado Spear",
+            "1155 Laughing Penguin Hammer"
+        ];
 
         string[10] memory symbols = [
-                    "FLAMING_BANANA",
-                    "EXPLODING_PINEAPPLE",
-                    "QUANTUM_DUCK",
-                    "POTATO_LAUNCHER",
-                    "PICKLE_FURY",
-                    "FLYING_SAUSAGE",
-                    "INVISIBLE_TACO",
-                    "SPACE_DONUT",
-                    "DANCING_AVOCADO",
-                    "LAUGHING_PENGUIN"
-            ];
+            "FLAMING_BANANA",
+            "EXPLODING_PINEAPPLE",
+            "QUANTUM_DUCK",
+            "POTATO_LAUNCHER",
+            "PICKLE_FURY",
+            "FLYING_SAUSAGE",
+            "INVISIBLE_TACO",
+            "SPACE_DONUT",
+            "DANCING_AVOCADO",
+            "LAUGHING_PENGUIN"
+        ];
 
         uint256[] memory initialAmounts = new uint256[](10);
         uint256[] memory initialIds = new uint256[](10);
@@ -135,19 +125,18 @@ contract Create1155 is Script {
         // Deploy 10 NFTs 1155 with funny weapon names and symbols
         for (uint256 i = 0; i < 10; i++) {
             address nft = factory.createNFT1155(
-                names[i],           // Unique funny weapon name
-                symbols[i],         // Unique symbol
+                names[i], // Unique funny weapon name
+                symbols[i], // Unique symbol
                 "",
-                initialReceiver,           // Royalty receiver
-                0,                         // Fee numerator
-                initialIds,                // Initial IDs for the weapons
-                initialAmounts,            // Initial amounts for each weapon
-                initialReceiver            // Initial receiver
+                initialReceiver, // Royalty receiver
+                0, // Fee numerator
+                initialIds, // Initial IDs for the weapons
+                initialAmounts, // Initial amounts for each weapon
+                initialReceiver // Initial receiver
             );
 
             console.log("1155 deployed to:", nft);
         }
-
     }
 }
 
@@ -204,6 +193,3 @@ contract ListAll1155 is Script {
         vm.stopBroadcast();
     }
 }
-
-
-

@@ -13,7 +13,7 @@ import "./RoyaltyFeatures.sol";
 contract NFT6909 is IERC6909, RoyaltyFeatures, Ownable {
     /// @dev Thrown when owner balance for id is insufficient.
     error InsufficientBalance(address owner, uint256 id);
-    
+
     /// @dev Thrown when spender allowance for id is insufficient.
     error InsufficientPermission(address spender, uint256 id);
 
@@ -40,7 +40,7 @@ contract NFT6909 is IERC6909, RoyaltyFeatures, Ownable {
         symbol = _symbol;
         baseURI = _baseURI;
         _setDefaultRoyalty(royaltyReceiver, feeNumerator);
-        
+
         // Initial minting
         for (uint256 i = 0; i < initialIds.length; i++) {
             _mint(initialReceiver, initialIds[i], initialAmounts[i]);
@@ -86,22 +86,22 @@ contract NFT6909 is IERC6909, RoyaltyFeatures, Ownable {
         _mint(account, id, amount);
     }
 
-    function mintBatch(
-        address to,
-        uint256[] memory ids,
-        uint256[] memory amounts
-    ) public onlyOwner {
+    function mintBatch(address to, uint256[] memory ids, uint256[] memory amounts) public onlyOwner {
         require(ids.length == amounts.length, "Arrays length mismatch");
         for (uint256 i = 0; i < ids.length; i++) {
             _mint(to, ids[i], amounts[i]);
         }
     }
 
-    function setBaseURI(string memory newBaseURI) public onlyOwner {
+    function setBaseURI(
+        string memory newBaseURI
+    ) public onlyOwner {
         baseURI = newBaseURI;
     }
 
-    function uri(uint256 id) public view returns (string memory) {
+    function uri(
+        uint256 id
+    ) public view returns (string memory) {
         return string(abi.encodePacked(baseURI, _toString(id), ".json"));
     }
 
@@ -119,14 +119,17 @@ contract NFT6909 is IERC6909, RoyaltyFeatures, Ownable {
     }
 
     /// @notice Checks if a contract implements an interface.
-    function supportsInterface(bytes4 interfaceId) public view override(IERC6909, ERC2981) returns (bool) {
-        return
-            interfaceId == 0x0f632fb3 || // ERC6909
-            interfaceId == 0x01ffc9a7 || // ERC165
-            super.supportsInterface(interfaceId); // ERC2981
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view override(IERC6909, ERC2981) returns (bool) {
+        return interfaceId == 0x0f632fb3 // ERC6909
+            || interfaceId == 0x01ffc9a7 // ERC165
+            || super.supportsInterface(interfaceId); // ERC2981
     }
 
-    function _toString(uint256 value) internal pure returns (string memory) {
+    function _toString(
+        uint256 value
+    ) internal pure returns (string memory) {
         if (value == 0) {
             return "0";
         }

@@ -18,7 +18,8 @@ contract NFT721Factory {
         uint256 _mintSupply,
         address _initialReceiver
     ) external returns (address) {
-        NFT721 newNFT = new NFT721(_name, _symbol, _baseURI, _royaltyReceiver, _feeNumerator, _mintSupply, _initialReceiver);
+        NFT721 newNFT =
+            new NFT721(_name, _symbol, _baseURI, _royaltyReceiver, _feeNumerator, _mintSupply, _initialReceiver);
 
         nftContracts.push(address(newNFT));
         creatorToContracts[msg.sender].push(address(newNFT));

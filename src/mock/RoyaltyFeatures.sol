@@ -13,11 +13,10 @@ abstract contract RoyaltyFeatures is ERC2981 {
         _;
     }
 
-    function setDefaultRoyalty(address receiver, uint96 feeNumerator) 
-        public 
-        virtual 
-        validRoyalty(receiver, feeNumerator) 
-    {
+    function setDefaultRoyalty(
+        address receiver,
+        uint96 feeNumerator
+    ) public virtual validRoyalty(receiver, feeNumerator) {
         _setDefaultRoyalty(receiver, feeNumerator);
         emit RoyaltyUpdated(receiver, feeNumerator);
     }
@@ -36,7 +35,9 @@ abstract contract RoyaltyFeatures is ERC2981 {
         emit TokenRoyaltyUpdated(tokenId, receiver, feeNumerator);
     }
 
-    function resetTokenRoyalty(uint256 tokenId) public virtual {
+    function resetTokenRoyalty(
+        uint256 tokenId
+    ) public virtual {
         _resetTokenRoyalty(tokenId);
         emit TokenRoyaltyUpdated(tokenId, address(0), 0);
     }
