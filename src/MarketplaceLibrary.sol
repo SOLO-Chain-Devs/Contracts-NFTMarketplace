@@ -5,6 +5,7 @@ pragma solidity ^0.8.27;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "./interface/IERC2981.sol";
+import "./interface/IERC6909.sol";
 
 library MarketplaceLibrary {
     function handleBidPayment(address _currency, uint256 _amount) internal returns (uint256) {
@@ -57,6 +58,15 @@ library MarketplaceLibrary {
         return false;
     }
 
+    function isERC6909(
+        address _tokenAddress
+    ) internal view returns (bool) {
+        if (_isContract(_tokenAddress)) {
+            return IERC165(_tokenAddress).supportsInterface(0x0f632fb3);
+        }
+        return false;
+    }
+
     function _isContract(
         address _addr
     ) internal view returns (bool) {
@@ -86,8 +96,8 @@ library MarketplaceLibrary {
         // We know royalties exist and are valid because we checked in getRoyaltyInfo
         (address receiver, uint256 royaltyAmount) = IERC2981(_tokenAddress).royaltyInfo(_tokenId, _salePrice);
 
-        // If it's ERC1155, multiply royalty by quantity
-        if (isERC1155(_tokenAddress)) {
+        // If it's ERC1155 or ERC6909, multiply royalty by quantity
+        if (isERC1155(_tokenAddress) || isERC6909(_tokenAddress)) {
             royaltyAmount = royaltyAmount * _amount;
         }
 

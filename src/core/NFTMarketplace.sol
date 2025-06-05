@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "../interface/IMarketplace.sol";
+import "../interface/IERC6909.sol";
 import "./MarketplaceAdmin.sol";
 import "./MarketplaceViews.sol";
 import "../MarketplaceLibrary.sol";
@@ -37,7 +38,8 @@ contract NFTMarketplace is IMarketplace, MarketplaceAdmin, MarketplaceViews, Ree
 
         bool _isERC721Token = _tokenAddress.isERC721();
         bool _isERC1155Token = _tokenAddress.isERC1155();
-        if (!_isERC721Token && !_isERC1155Token) revert UnsupportedTokenStandard();
+        bool _isERC6909Token = _tokenAddress.isERC6909();
+        if (!_isERC721Token && !_isERC1155Token && !_isERC6909Token) revert UnsupportedTokenStandard();
 
         if (_isERC721Token) {
             if (_amount != 1) revert ERC721AmountMustBe1();
@@ -46,12 +48,21 @@ contract NFTMarketplace is IMarketplace, MarketplaceAdmin, MarketplaceViews, Ree
             if (!nft.isApprovedForAll(msg.sender, address(this))) {
                 revert ContractNeedsApproval();
             }
-        } else {
+        } else if (_isERC1155Token) {
             IERC1155 nft = IERC1155(_tokenAddress);
             if (nft.balanceOf(msg.sender, _tokenId) < _amount) {
                 revert InsufficientTokenBalance();
             }
             if (!nft.isApprovedForAll(msg.sender, address(this))) {
+                revert ContractNeedsApproval();
+            }
+        } else {
+            // ERC6909 handling
+            IERC6909 nft = IERC6909(_tokenAddress);
+            if (nft.balanceOf(msg.sender, _tokenId) < _amount) {
+                revert InsufficientTokenBalance();
+            }
+            if (!nft.isOperator(msg.sender, address(this))) {
                 revert ContractNeedsApproval();
             }
         }
@@ -81,7 +92,7 @@ contract NFTMarketplace is IMarketplace, MarketplaceAdmin, MarketplaceViews, Ree
     /**
      * @notice Purchases a listed NFT
      * @param _listingId The ID of the listing to purchase
-     * @dev Handles both ERC721 and ERC1155 transfers, as well as payment in native or ERC20 tokens
+     * @dev Handles ERC721, ERC1155, and ERC6909 transfers, as well as payment in native or ERC20 tokens
      */
     function buyListing(
         uint256 _listingId
@@ -100,9 +111,14 @@ contract NFTMarketplace is IMarketplace, MarketplaceAdmin, MarketplaceViews, Ree
 
         if (listing.tokenAddress.isERC721()) {
             IERC721(listing.tokenAddress).transferFrom(listing.seller, msg.sender, listing.tokenId);
-        } else {
+        } else if (listing.tokenAddress.isERC1155()) {
             IERC1155(listing.tokenAddress).safeTransferFrom(
                 listing.seller, msg.sender, listing.tokenId, listing.amount, ""
+            );
+        } else {
+            // ERC6909 handling
+            IERC6909(listing.tokenAddress).transferFrom(
+                listing.seller, msg.sender, listing.tokenId, listing.amount
             );
         }
 
@@ -155,7 +171,7 @@ contract NFTMarketplace is IMarketplace, MarketplaceAdmin, MarketplaceViews, Ree
                 revert ContractNeedsApproval();
             }
             nft.transferFrom(msg.sender, bid.bidder, _tokenId);
-        } else {
+        } else if (_tokenAddress.isERC1155()) {
             IERC1155 nft = IERC1155(_tokenAddress);
             if (nft.balanceOf(msg.sender, _tokenId) < _tokenAmount) {
                 revert InsufficientTokenBalance();
@@ -164,6 +180,16 @@ contract NFTMarketplace is IMarketplace, MarketplaceAdmin, MarketplaceViews, Ree
                 revert ContractNeedsApproval();
             }
             nft.safeTransferFrom(msg.sender, bid.bidder, _tokenId, _tokenAmount, "");
+        } else {
+            // ERC6909 handling
+            IERC6909 nft = IERC6909(_tokenAddress);
+            if (nft.balanceOf(msg.sender, _tokenId) < _tokenAmount) {
+                revert InsufficientTokenBalance();
+            }
+            if (!nft.isOperator(msg.sender, address(this))) {
+                revert ContractNeedsApproval();
+            }
+            nft.transferFrom(msg.sender, bid.bidder, _tokenId, _tokenAmount);
         }
 
         (address royaltyReceiver, uint256 royaltyAmount, bool hasRoyalties) =
@@ -221,8 +247,9 @@ contract NFTMarketplace is IMarketplace, MarketplaceAdmin, MarketplaceViews, Ree
 
         bool isERC721Token = _tokenAddress.isERC721();
         bool isERC1155Token = _tokenAddress.isERC1155();
+        bool isERC6909Token = _tokenAddress.isERC6909();
 
-        if (!isERC721Token && !isERC1155Token) {
+        if (!isERC721Token && !isERC1155Token && !isERC6909Token) {
             revert UnsupportedTokenStandard();
         }
 

@@ -8,7 +8,7 @@ abstract contract MarketplaceStorage {
     mapping(uint256 => IMarketplace.Listing) public listings;
     uint256 public listingCounter;
 
-    // Unified mapping for both ERC721 and ERC1155 bids
+    // Unified mapping for ERC721, ERC1155 and ERC6909 bids
     mapping(address => mapping(uint256 => mapping(uint256 => IMarketplace.Bid))) public bids;
 
     mapping(address => bool) public acceptedCurrencies;
@@ -22,6 +22,7 @@ abstract contract MarketplaceStorage {
     // ERC165 interface IDs
     bytes4 internal constant INTERFACE_ID_ERC721 = 0x80ac58cd;
     bytes4 internal constant INTERFACE_ID_ERC1155 = 0xd9b67a26;
+    bytes4 internal constant INTERFACE_ID_ERC6909 = 0x0f632fb3;
 
     // Custom errors
     error ArrayLengthMismatch();

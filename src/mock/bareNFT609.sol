@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.27;
 import "../interface/IERC6909.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./RoyaltyFeatures.sol";

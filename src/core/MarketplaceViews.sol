@@ -72,12 +72,12 @@ contract MarketplaceViews is MarketplaceStorage {
     /**
      * @notice Checks if a token address supports either ERC721 or ERC1155 standard
      * @param _tokenAddress The address of the token contract to check
-     * @return bool True if the token is either ERC721 or ERC1155
+     * @return bool True if the token is ERC721 or ERC1155 or ERC6909
      */
     function isTokenAccepted(
         address _tokenAddress
     ) external view returns (bool) {
-        return _tokenAddress.isERC721() || _tokenAddress.isERC1155();
+        return _tokenAddress.isERC721() || _tokenAddress.isERC1155() || _tokenAddress.isERC6909();
     }
 
     /**
@@ -110,7 +110,7 @@ contract MarketplaceViews is MarketplaceStorage {
         if (supportsRoyalties(_tokenAddress)) {
             (receiver, royaltyAmount) = IERC2981(_tokenAddress).royaltyInfo(_tokenId, _salePrice);
 
-            if (_tokenAddress.isERC1155()) {
+            if (_tokenAddress.isERC1155() || _tokenAddress.isERC6909()) {
                 royaltyAmount = royaltyAmount * _amount;
             }
 
