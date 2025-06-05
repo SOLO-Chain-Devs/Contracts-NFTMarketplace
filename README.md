@@ -52,19 +52,19 @@ forge install
 
 3. Build the project:
 ```bash
-forge build --via-ir
+/forge build --via-ir
 ```
 
 ### Testing
 
 Run the test suite:
 ```bash
-forge test
+forge test --via-ir
 ```
 
 Run tests with gas reporting:
 ```bash
-forge test --gas-report
+forge test --via-ir --gas-report
 ```
 
 ### Code Formatting
