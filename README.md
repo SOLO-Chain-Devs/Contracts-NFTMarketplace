@@ -1,12 +1,13 @@
 # NFT Marketplace Smart Contract
 
-A robust and secure NFT marketplace implementation supporting both ERC721 and ERC1155 tokens with multi-currency support.
+A robust and secure NFT marketplace implementation supporting ERC721, ERC1155, and ERC6909 tokens with multi-currency support and optional curation controls.
 
 ## Features
 
-- **Multi-Token Support**: Compatible with both ERC721 and ERC1155 NFTs
+- **Multi-Token Support**: Compatible with ERC721, ERC1155, and ERC6909 NFTs
 - **Multi-Currency**: Support for ETH and any ERC20 token as payment method
 - **Bidding System**: Advanced bidding functionality with customizable duration
+- **Optional Curation**: Configurable gatekeeping system for curated marketplace experiences
 - **Marketplace Operations**:
   - List NFTs for sale
   - Place bids with custom timeouts
@@ -17,16 +18,18 @@ A robust and secure NFT marketplace implementation supporting both ERC721 and ER
   - Currency whitelist management
   - Bid duration settings
   - Cancellation fee configuration
+  - Curation system toggle and validator management
 
 ## Smart Contract Architecture
 
 The marketplace is built with a modular architecture consisting of:
 
-- **Core**: Main marketplace functionality
+- **Core**: Main marketplace functionality with unified multi-token support
 - **Storage**: State variables and data structures
-- **Admin**: Privileged operations and configurations
+- **Admin**: Privileged operations and configurations including curation controls
 - **Views**: Read-only functions for querying market state
 - **Libraries**: Reusable utilities for token handling and payments
+- **Curation**: Optional validation layer for marketplace access control
 
 ## Development Environment
 
@@ -52,7 +55,7 @@ forge install
 
 3. Build the project:
 ```bash
-/forge build --via-ir
+forge build --via-ir
 ```
 
 ### Testing
@@ -140,12 +143,21 @@ forge script script/offChainPlayground/NFTFactory.s.sol:Create1155 \
   --broadcast
 ```
 
+Create some 6909
+```bash
+source .env &&
+forge script script/offChainPlayground/NFTFactory.s.sol:Create6909 \
+  --rpc-url $OFFCHAIN_RPC_URL \
+  --broadcast
+```
+
 ...
 
 ## Security Features
 
 - Reentrancy protection
 - Access control for admin functions
+- Optional curation system for marketplace access control
 - Fee handling in basis points for precision
 - Support for safe token transfers
 - Custom durations for bids
@@ -187,8 +199,22 @@ setBidDuration(newDuration)
 
 // Set cancellation fee
 setCancellationFeePercentage(newPercentage)
+
+// Configure curation system
+setCurationEnabled(enabled)
+setCurationValidator(validatorAddress)
 ```
 
-## License
+## Curation System
 
-MIT License
+The marketplace includes an optional curation system that allows administrators to control which NFT collections can be listed and bid upon. This feature enables both permissionless and curated marketplace experiences.
+
+### Curation Features
+- **Toggle Control**: Enable or disable curation system at any time
+- **Validator Contracts**: Pluggable validation logic through external contracts
+- **Dynamic Approval**: Real-time approval/disapproval of collections
+- **Granular Control**: Per-collection approval management
+
+### Implementation
+When enabled, the curation system validates all listing and bidding operations against an external validator contract. This allows for flexible curation policies while maintaining marketplace core functionality.
+
