@@ -56,4 +56,5 @@ abstract contract MarketplaceStorage {
     error BidDurationTooLong();
     error CollectionNotApproved(address tokenContract);
     error InvalidCurationValidator();
+    error InvalidCurrency(address currency);
 }

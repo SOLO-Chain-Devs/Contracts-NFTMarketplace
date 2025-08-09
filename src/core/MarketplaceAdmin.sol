@@ -7,6 +7,9 @@ import "../interface/IMarketplace.sol";
 import "../MarketplaceStorage.sol";
 
 contract MarketplaceAdmin is MarketplaceStorage, Ownable {
+    event BidDurationUpdated(uint256 oldDuration, uint256 newDuration);
+    event CancellationFeeUpdated(uint256 oldPercentage, uint256 newPercentage);
+
     /**
      * @notice Initializes the contract with ETH as an accepted currency
      * @dev Sets the contract owner and adds ETH (address(0)) to accepted currencies
@@ -29,6 +32,10 @@ contract MarketplaceAdmin is MarketplaceStorage, Ownable {
         for (uint256 i = 0; i < _currencies.length; i++) {
             if (_currencies[i] != address(0)) {
                 // Prevent changing ETH status
+                if (_accepted[i]) {
+                    // Only allow enabling contract addresses
+                    if (_currencies[i].code.length == 0) revert InvalidCurrency(_currencies[i]);
+                }
                 if (_accepted[i] && !acceptedCurrencies[_currencies[i]]) {
                     currencyList.push(_currencies[i]);
                 } else if (!_accepted[i] && acceptedCurrencies[_currencies[i]]) {
@@ -56,7 +63,9 @@ contract MarketplaceAdmin is MarketplaceStorage, Ownable {
     ) external onlyOwner {
         if (_newDuration == 0) revert BidDurationMustBeGreaterThanZero();
         if (_newDuration > MAX_BID_DURATION) revert BidDurationTooLong();
+        uint256 old = bidDuration;
         bidDuration = _newDuration;
+        emit BidDurationUpdated(old, _newDuration);
     }
 
     /**
@@ -70,7 +79,9 @@ contract MarketplaceAdmin is MarketplaceStorage, Ownable {
         if (_newPercentage > MAX_CANCELLATION_FEE_PERCENTAGE) {
             revert CancellationFeeTooHigh();
         }
+        uint256 old = cancellationFeePercentage;
         cancellationFeePercentage = _newPercentage;
+        emit CancellationFeeUpdated(old, _newPercentage);
     }
 
     /**
