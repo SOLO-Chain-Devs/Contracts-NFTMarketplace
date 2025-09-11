@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "../interface/IMarketplace.sol";
 import "../interface/IERC6909.sol";
 import "./MarketplaceAdmin.sol";
@@ -13,6 +14,7 @@ import "../MarketplaceLibrary.sol";
 
 contract NFTMarketplace is IMarketplace, MarketplaceAdmin, MarketplaceViews, ReentrancyGuard {
     using MarketplaceLibrary for address;
+    using SafeERC20 for IERC20;
 
     /**
      * @notice Validates that a token contract is approved for marketplace interactions when curation is enabled
@@ -122,9 +124,7 @@ contract NFTMarketplace is IMarketplace, MarketplaceAdmin, MarketplaceViews, Ree
             if (msg.value < listing.price) revert InsufficientPayment();
         } else {
             if (msg.value != 0) revert EthNotAccepted();
-            if (!IERC20(listing.currency).transferFrom(msg.sender, address(this), listing.price)) {
-                revert TokenTransferFailed();
-            }
+            IERC20(listing.currency).safeTransferFrom(msg.sender, address(this), listing.price);
         }
 
         if (listing.tokenAddress.isERC721()) {
